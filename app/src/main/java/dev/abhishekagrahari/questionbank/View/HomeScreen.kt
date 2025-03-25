@@ -104,6 +104,15 @@ fun HomeScreen(navController: NavController) {
                 icon = Icons.Default.ShoppingCart,
                 onClick = { navController.navigate(Screen.ViewPaper.route) }
             )
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CustomButton(
+                text = "Let's have the quiz:",
+                icon = Icons.Default.Info,
+                onClick = { navController.navigate(Screen.quiz.route) }
+            )
         }
     }
 

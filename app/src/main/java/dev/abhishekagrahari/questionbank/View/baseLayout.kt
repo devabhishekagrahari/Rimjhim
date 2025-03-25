@@ -35,7 +35,7 @@ fun BaseLayout(
         drawerState = drawerState,
         gesturesEnabled = true,
         modifier = Modifier
-            .background(Color(0xFF8EC5E3))
+            .background(Color(0x979ECFEA))
             .fillMaxSize(),
         drawerContent = {
             if(drawerState.isOpen){
@@ -77,7 +77,7 @@ fun BaseLayout(
             content = { paddingValues ->
                 Surface(
                     modifier = Modifier.padding(paddingValues),
-                    color = Color(0xFF8EC5E3)
+                    color = Color(0xFF1B1B1B)
                 ) {
                     content()
                 }

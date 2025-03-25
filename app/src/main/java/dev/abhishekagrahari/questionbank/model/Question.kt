@@ -8,7 +8,7 @@ data class Question(
     val question: String = "",
     val options: List<String>? = null, // Only for MCQs
     val answer: String = "",
-    val type: String = "", // "MCQ", "Short Answer", "Long Answer", "Diagram"
+    val type: String = "MCQ", // "MCQ", "Short Answer", "Long Answer", "Diagram"
     val category: String = "",
     val difficulty: String = "", // "Easy", "Medium", "Hard"
     val imageUrl: String? = null, // Optional for diagram-based questions

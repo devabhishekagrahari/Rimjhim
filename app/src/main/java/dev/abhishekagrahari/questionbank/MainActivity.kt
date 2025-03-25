@@ -22,6 +22,7 @@ import dev.abhishekagrahari.questionbank.View.FullPaperViewScreen
 import dev.abhishekagrahari.questionbank.View.GeneratePaperScreen
 import dev.abhishekagrahari.questionbank.View.HomeScreen
 import dev.abhishekagrahari.questionbank.View.QuestionListScreen
+import dev.abhishekagrahari.questionbank.View.QuizScreen
 import dev.abhishekagrahari.questionbank.View.ViewPaperScreen
 import dev.abhishekagrahari.questionbank.model.Question
 import dev.abhishekagrahari.questionbank.ui.theme.QuestionBankTheme
@@ -48,7 +49,9 @@ fun QuestionBankApp() {
 
         composable(Screen.Home.route) {
             BaseLayout(navController = navController ){ HomeScreen(navController)} }
-composable(Screen.AboutUs.route){
+        composable(Screen.quiz.route) {
+            BaseLayout(navController = navController ){ QuizScreen(navController = navController) } }
+        composable(Screen.AboutUs.route){
     BaseLayout(navController = navController , title = " About us") {
         AboutUsScreen()
     }
@@ -84,9 +87,6 @@ composable(Screen.AboutUs.route){
         }
 
         */
-
-
-        
         composable(Screen.AddQuestion.route) { BaseLayout(navController = navController , title= "Let's Add Question to the Question Bank"){AddQuestionScreen { navController.popBackStack() }} }
         composable(Screen.QuestionList.route) { BaseLayout(navController = navController, title = "List of Added Questions"){QuestionListScreen() }}
         composable(Screen.GeneratePaper.route) { BaseLayout(navController = navController, title= "Let's create a new paper"){GeneratePaperScreen ( context= LocalContext.current, onPaperGenerated =  {navController.popBackStack()}) }}
@@ -107,4 +107,5 @@ sealed class Screen(val route: String) {
     object ContactUs: Screen("contact_us")
     object AboutUs: Screen("about_us")
     object FullPaper: Screen("full_paper_screen")
+    object quiz:Screen("quiz")
 }
