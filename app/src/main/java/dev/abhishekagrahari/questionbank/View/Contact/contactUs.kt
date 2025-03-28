@@ -1,4 +1,4 @@
-package dev.abhishekagrahari.questionbank.View
+package dev.abhishekagrahari.questionbank.View.Contact
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,36 +8,32 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
-import androidx.compose.material3.DividerDefaults.color
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import dev.abhishekagrahari.questionbank.R
 
 @Composable
 fun ContactUsScreen() {
     val primaryColor = Color(0xFF6200EA) // Custom Primary Color
-
+    val context = LocalContext.current
+    val backgroundColor = MaterialTheme.colorScheme.background
     // Outer column for the whole screen
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(Color(0xFFE3F2FD)),
+            .background(backgroundColor),
         horizontalAlignment = Alignment.Start
     ) {
 
@@ -59,6 +55,10 @@ fun ContactUsScreen() {
 
 @Composable
 fun ContactItem(label: String, value: String, icon: ImageVector) {
+    val cardBackgroundColor = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
+    val iconTint = MaterialTheme.colorScheme.primary
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,8 +66,8 @@ fun ContactItem(label: String, value: String, icon: ImageVector) {
             .clickable { /* Handle click event here */ },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black
+            containerColor = cardBackgroundColor,
+            contentColor = contentColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -82,7 +82,7 @@ fun ContactItem(label: String, value: String, icon: ImageVector) {
                 imageVector = icon,
                 contentDescription = label,
                 modifier = Modifier.size(32.dp),
-                tint = Color.Gray
+                tint = iconTint
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -91,12 +91,13 @@ fun ContactItem(label: String, value: String, icon: ImageVector) {
             Column {
                 Text(
                     text = label,
-                    style = TextStyle(fontSize = 14.sp, color = Color.Gray)
+                    style = TextStyle(fontSize = 14.sp, color = contentColor.copy(alpha = 0.7f))
                 )
                 Text(
                     text = value,
-                    style = TextStyle(fontSize = 16.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold, color = contentColor)
                 )
+
             }
         }
     }
