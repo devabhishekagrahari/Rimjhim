@@ -1,27 +1,48 @@
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.abhishekagrahari.questionbank.DataConnection.assessAnswer
+import dev.abhishekagrahari.questionbank.DataConnection.FeedbackResponse
+import dev.abhishekagrahari.questionbank.model.Question
+import dev.abhishekagrahari.questionbank.repository.QuestionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class QuizViewModel : ViewModel() {
 
-    private val _feedbackscore = MutableStateFlow("")
-    val feedbackscore: StateFlow<String> = _feedbackscore
-    private val _feedbackresponse = MutableStateFlow("")
-    val feedbackresponse: StateFlow<String> = _feedbackresponse
+    private val _feedbackMap = MutableStateFlow<Map<String, FeedbackResponse>>(emptyMap())
+    val feedbackMap: StateFlow<Map<String, FeedbackResponse>> = _feedbackMap
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    private val _isLoadingMap = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    val isLoadingMap: StateFlow<Map<String, Boolean>> = _isLoadingMap
 
-    fun evaluateAnswer(userAnswer: String, expectedAnswer: String) {
+    private val repo = QuestionRepository()
+    private val _questions = MutableStateFlow<List<Question>>(emptyList())
+    val questions: StateFlow<List<Question>> = _questions.asStateFlow()
+
+    fun evaluateAnswer(question: String, userAnswer: String, expectedAnswer: String) {
         viewModelScope.launch {
-            _isLoading.value = true
+            _isLoadingMap.value = _isLoadingMap.value.toMutableMap().apply {
+                this[question] = true
+            }
+
             val response = assessAnswer(userAnswer, expectedAnswer)
-            _feedbackscore.value = "Score: ${response.score}/10"
-            _feedbackresponse.value ="Feedback: ${response.feedback}"
-            _isLoading.value = false
+
+            _feedbackMap.value = _feedbackMap.value.toMutableMap().apply {
+                this[question] = response
+            }
+
+            _isLoadingMap.value = _isLoadingMap.value.toMutableMap().apply {
+                this[question] = false
+            }
+        }
+    }
+
+    fun loadQuestions() {
+        viewModelScope.launch {
+            val data = repo.getRandomQuestions()
+            _questions.value = data
         }
     }
 }

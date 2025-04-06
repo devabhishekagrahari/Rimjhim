@@ -26,6 +26,17 @@ class QuestionRepository(
         }
     }
 
+    suspend fun getRandomQuestions(limit: Int = 5): List<Question> {
+        return try {
+            val snapshot = questionCollection.get().await()
+            val allQuestions = snapshot.documents.mapNotNull { it.toObject(Question::class.java) }
+            allQuestions.shuffled().take(limit)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
     /** Fetch all questions */
     suspend fun getQuestions(): List<Question> {
         return try {

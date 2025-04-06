@@ -12,7 +12,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dev.abhishekagrahari.questionbank.View.About.AboutUsScreen
 import dev.abhishekagrahari.questionbank.View.Home.AddQuestionScreen
 import dev.abhishekagrahari.questionbank.View.BaseLayout
@@ -20,6 +22,7 @@ import dev.abhishekagrahari.questionbank.View.Contact.ContactUsScreen
 import dev.abhishekagrahari.questionbank.View.Home.GeneratePaperScreen
 import dev.abhishekagrahari.questionbank.View.Home.HomeScreen
 import dev.abhishekagrahari.questionbank.View.Home.QuestionListScreen
+import dev.abhishekagrahari.questionbank.View.Home.QuizUI
 //import dev.abhishekagrahari.questionbank.View.QuizScreen
 import dev.abhishekagrahari.questionbank.View.Home.ViewPaperScreen
 import dev.abhishekagrahari.questionbank.View.QuizScreen
@@ -45,6 +48,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()
+    val viewModel = QuizViewModel()
 
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
@@ -52,10 +56,21 @@ fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                 HomeScreen(navController)
             }
         }
-        composable(Screen.quiz.route) {
-            BaseLayout(navController = navController , title= "Let's have a Quiz " , darkTheme= darkTheme , onThemeChange = onThemeChange){
-                QuizScreen(viewModel = QuizViewModel(), navController = navController)
-            }
+        composable(
+            "quiz_screen/{question}/{answer}",
+            arguments = listOf(
+                navArgument("question") { type = NavType.StringType },
+                navArgument("answer") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val question = backStackEntry.arguments?.getString("question") ?: ""
+            val answer = backStackEntry.arguments?.getString("answer") ?: ""
+
+            QuizScreen(
+                viewModel =viewModel,
+                question = question,
+                expectedAnswer = answer
+            )
         }
         composable(Screen.AboutUs.route){
             BaseLayout(navController = navController , title = "About us", darkTheme = darkTheme, onThemeChange = onThemeChange) {
@@ -87,6 +102,14 @@ fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                 ViewPaperScreen(context = LocalContext.current, navController = navController)
             }
         }
+        composable(Screen.Quizui.route){
+            BaseLayout(navController = navController , title = "About us", darkTheme = darkTheme, onThemeChange = onThemeChange) {
+               QuizUI(
+                   viewModel = viewModel,
+                   navController = navController
+               )
+            }
+        }
     }
 }
 sealed class Screen(val route: String) {
@@ -99,4 +122,5 @@ sealed class Screen(val route: String) {
     object AboutUs: Screen("about_us")
     object FullPaper: Screen("full_paper_screen")
     object quiz:Screen("quiz")
+    object Quizui: Screen("quizUI")
 }

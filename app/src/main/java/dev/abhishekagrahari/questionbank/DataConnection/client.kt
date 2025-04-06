@@ -20,7 +20,7 @@ val client = HttpClient(CIO) {
 }
 
 // API Key (Replace with your own)
-const val GEMINI_API_KEY = "AIzaSyBolvsvQneWaRuCmTRLzcHLTRGbVcYa70Q"
+const val GEMINI_API_KEY = "AIzaSyB4cQmSUnrdTHjGiFtzlwjhmPic6XpGrZE"
 const val GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY"
 
 // Request Data Model

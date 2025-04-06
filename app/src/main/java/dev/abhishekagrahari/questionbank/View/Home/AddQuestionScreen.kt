@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.abhishekagrahari.questionbank.model.DifficultyLevel
 import dev.abhishekagrahari.questionbank.model.Question
+import dev.abhishekagrahari.questionbank.model.QuestionType
 import dev.abhishekagrahari.questionbank.viewmodel.QuestionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +31,7 @@ fun AddQuestionScreen(viewModel: QuestionViewModel = viewModel(), onNavigateBack
     var answerText by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
     var selectedDifficulty by remember { mutableStateOf(DifficultyLevel.EASY) }
-    //var questionType by remember { mutableStateOf(QuestionType.MCQ) }
+    var questionType by remember { mutableStateOf(QuestionType.MCQ) }
     var expanded by remember { mutableStateOf(false) }
     var expandedt by remember { mutableStateOf(false) }
     var newOptionText by remember { mutableStateOf("") }
@@ -104,36 +105,52 @@ fun AddQuestionScreen(viewModel: QuestionViewModel = viewModel(), onNavigateBack
             }
         }
 
-        //type drop down menu
         ExposedDropdownMenuBox(
-            expanded = expandedt,
-            onExpandedChange = { expandedt = it }
-        )
-        {/*
-                OutlinedTextField(
-                    value = questionType.label,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Select Type Of Question:") },
-                    modifier = Modifier.menuAnchor().fillMaxWidth(),
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            OutlinedTextField(
+                value = questionType.label,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Select Question Type") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(Color(0xFFF5F5F5)) // Same as other text fields
+                    .menuAnchor(),
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Dropdown Icon",
+                        tint = Color.Gray
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = Color(0xFFF5F5F5), // Matches other text fields
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    cursorColor = MaterialTheme.colorScheme.primary
                 )
-                ExposedDropdownMenu(
-                    expanded = expandedt,
-                    onDismissRequest = { expandedt = false }
-                ) {
-                    QuestionType.entries.forEach { type ->
-                        DropdownMenuItem(
-                            text = { Text(type.label) },
-                            onClick = {
-                                questionType = type
-                                expandedt = false
-                            }
-                        )
-                    }
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                QuestionType.entries.forEach { type ->
+                    DropdownMenuItem(
+                        text = { Text(type.label) },
+                        onClick = {
+                           questionType= type
+                            expanded = false
+                        }
+                    )
                 }
-                */
+            }
         }
+
+
 
         Spacer(modifier = Modifier.height(20.dp))
 

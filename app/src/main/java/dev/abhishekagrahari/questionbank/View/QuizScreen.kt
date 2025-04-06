@@ -11,16 +11,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-
 
 @Composable
-fun QuizScreen(viewModel: QuizViewModel , navController: NavController) {
+fun QuizScreen(viewModel: QuizViewModel, question: String, expectedAnswer: String) {
     var userAnswer by remember { mutableStateOf("") }
 
-    val feedback by viewModel.feedbackresponse.collectAsState()
-    val score by viewModel.feedbackscore.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val feedbackMap by viewModel.feedbackMap.collectAsState()
+    val loadingMap by viewModel.isLoadingMap.collectAsState()
+
+    val feedbackResponse = feedbackMap[question]
+    val isLoading = loadingMap[question] ?: false
 
     Column(
         modifier = Modifier
@@ -30,7 +30,7 @@ fun QuizScreen(viewModel: QuizViewModel , navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Introduce yourself (Enter your answer):",
+            text = question,
             fontSize = 18.sp,
             style = MaterialTheme.typography.titleMedium
         )
@@ -47,7 +47,7 @@ fun QuizScreen(viewModel: QuizViewModel , navController: NavController) {
         Button(
             onClick = {
                 if (userAnswer.isNotBlank()) {
-                    viewModel.evaluateAnswer(userAnswer, "The correct answer goes here.")
+                    viewModel.evaluateAnswer(question, userAnswer, expectedAnswer)
                 }
             },
             enabled = !isLoading,
@@ -60,16 +60,16 @@ fun QuizScreen(viewModel: QuizViewModel , navController: NavController) {
             }
         }
 
-        if (feedback.isNotBlank()) {
+        feedbackResponse?.let {
             Text(
-                text = score,
+                text = "Score: ${it.score}/10",
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 12.dp)
             )
 
             Text(
-                text = feedback,
+                text = it.feedback,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 8.dp)
