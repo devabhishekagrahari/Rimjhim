@@ -2,12 +2,19 @@ package dev.abhishekagrahari.questionbank.View
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -22,62 +29,60 @@ import kotlinx.coroutines.coroutineScope
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseLayout(
-    navController: NavController ,
-    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
-    title: String = "Let's Create Questions Easily",
-    content: @Composable () -> Unit,
+    navController: NavController,
+    title: String = "Questions Bank",
+    darkTheme: Boolean,  // Accept current theme state
+    onThemeChange: (Boolean) -> Unit, // Callback to change theme
+    content: @Composable () -> Unit
 ) {
-    val primaryColor = Color(0xFF6200EA) // Custom Primary Color
-    val onPrimaryColor = Color.White    // Custom On Primary Color
+    val drawerState = rememberDrawerState(DrawerValue.Closed) // 🔥 Restored drawerState
     val coroutineScope = rememberCoroutineScope()
+    var expanded by remember { mutableStateOf(false) }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = true,
-        modifier = Modifier
-            .background(Color(0x979ECFEA))
-            .fillMaxSize(),
-        drawerContent = {
-            if(drawerState.isOpen){
-                Spacer(modifier= Modifier.height(32.dp).background(Color(0xFF143854)))
-                DrawerContent(navController = navController, coroutineScope = coroutineScope, drawerState = drawerState)
-            }
-        }
-    ) {
+    CustomDrawerLayout(navController, coroutineScope, drawerState) { // 🔥 Pass drawerState
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = title,
-                            style = TextStyle(
-                                fontSize = 22.sp,
-                                color = onPrimaryColor
-                            )
-                        )
-                    },
+                    title = { Text(text = title) },
                     navigationIcon = {
                         IconButton(onClick = {
                             coroutineScope.launch {
-                                if (drawerState.isClosed) drawerState.open()
-                                else drawerState.close()
+                                if (drawerState.isClosed) drawerState.open() else drawerState.close()
                             }
                         }) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = "Menu Icon",
-                                tint = onPrimaryColor
-                            )
+                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu Icon")
                         }
                     },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary                   )
+                    actions = {
+                        // ⚙️ Settings Dropdown
+                        Box {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
+                            }
+                            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                                DropdownMenuItem(
+                                    text = { Text("Light Mode") },
+                                    onClick = {
+                                        onThemeChange(false) // Switch to Light Mode
+                                        expanded = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Dark Mode") },
+                                    onClick = {
+                                        onThemeChange(true) // Switch to Dark Mode
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                 )
             },
             content = { paddingValues ->
                 Surface(
                     modifier = Modifier.padding(paddingValues),
-                    color = Color(0xFF1B1B1B)
+                    color = if (darkTheme) Color.DarkGray else Color.White
                 ) {
                     content()
                 }
@@ -86,9 +91,37 @@ fun BaseLayout(
     }
 }
 
+
+@Composable
+fun CustomDrawerLayout(
+    navController: NavController,
+    coroutineScope: CoroutineScope,
+    drawerState: DrawerState,
+    content: @Composable () -> Unit)
+{
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DrawerContent(navController, coroutineScope, drawerState)
+        },
+        gesturesEnabled = true,
+        scrimColor = Color.Black.copy(alpha = 0.4f) // Darkens the background slightly
+    ) {
+        content()
+    }
+}
+
 @Composable
 fun DrawerContent(navController: NavController,coroutineScope: CoroutineScope , drawerState: DrawerState) {
-    Column(modifier = Modifier.padding(top =50.dp).background(MaterialTheme.colorScheme.primary).fillMaxSize()) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(0.7f) // **Set drawer width to 70%**
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(top = 50.dp)
+    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         DrawerItem(
             coroutineScope = coroutineScope,
             text = "Homepage",
@@ -111,24 +144,27 @@ fun DrawerContent(navController: NavController,coroutineScope: CoroutineScope , 
             drawerState = drawerState
         )
     }
+    }
 }
-
 @Composable
-fun DrawerItem(text: String, coroutineScope: CoroutineScope , navController: NavController, viewid: String, drawerState: DrawerState) {
+fun DrawerItem(
+    text: String,
+    navController: NavController,
+    coroutineScope: CoroutineScope,
+    viewid: String,
+    drawerState: DrawerState
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable {
                 navController.navigate(viewid)
-                // Close the drawer after clicking on an item
-                coroutineScope.launch {
-                    drawerState.close()
-                }
+                coroutineScope.launch { drawerState.close() } // Close drawer after navigation
             },
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black
+            containerColor = MaterialTheme.colorScheme.surface, // Adapts to light/dark theme
+            contentColor = MaterialTheme.colorScheme.onSurface // Ensures contrast
         ),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -136,10 +172,13 @@ fun DrawerItem(text: String, coroutineScope: CoroutineScope , navController: Nav
         Text(
             text = text,
             modifier = Modifier
-                .fillMaxWidth().padding(8.dp)
-                .padding(8.dp),
-            style = TextStyle(fontSize = 18.sp)
+                .fillMaxWidth()
+                .padding(12.dp),
+            style = TextStyle(
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onSurface // Ensures text visibility
+            )
         )
     }
-    HorizontalDivider()
+    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant) // Subtle divider color
 }

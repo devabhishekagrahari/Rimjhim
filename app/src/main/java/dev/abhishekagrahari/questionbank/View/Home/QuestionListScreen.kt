@@ -1,4 +1,4 @@
-package dev.abhishekagrahari.questionbank.View
+package dev.abhishekagrahari.questionbank.View.Home
 
 
 
@@ -20,19 +20,18 @@ fun QuestionListScreen(viewModel: QuestionViewModel = viewModel()) {
 
     LaunchedEffect(Unit) { viewModel.loadQuestions() }
 
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("All Questions") }) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
-        ) {
-            LazyColumn {
-                items(questions) { question ->
-                    QuestionItem(question, viewModel)
-                }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(text = "All Questions", style = MaterialTheme.typography.headlineMedium)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn {
+            items(questions) { question ->
+                QuestionItem(question, viewModel)
             }
         }
     }
