@@ -2,9 +2,11 @@ package dev.abhishekagrahari.questionbank.View.Home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -34,9 +36,9 @@ fun AddQuestionScreen(viewModel: QuestionViewModel = viewModel(), onNavigateBack
     var newOptionText by remember { mutableStateOf("") }
     var options by remember { mutableStateOf(mutableListOf<String>()) }
     var createdBy by remember { mutableStateOf("admin") }
-
+    val scrollState = rememberScrollState()
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         CustomTextField(
