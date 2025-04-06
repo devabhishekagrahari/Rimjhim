@@ -22,7 +22,7 @@ import dev.abhishekagrahari.questionbank.viewmodel.QuestionPaperViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GeneratePaperScreen(viewModel: QuestionPaperViewModel = viewModel(), context: Context , onPaperGenerated: () -> Unit) {
+fun GeneratePaperScreen(viewModel: QuestionPaperViewModel , context: Context , onPaperGenerated: () -> Unit) {
 
     var questionCount by remember { mutableStateOf("5") }
     var selectedDifficulty by remember { mutableStateOf(DifficultyLevel.EASY) }

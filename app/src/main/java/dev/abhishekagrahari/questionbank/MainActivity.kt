@@ -27,6 +27,8 @@ import dev.abhishekagrahari.questionbank.View.Home.QuizUI
 import dev.abhishekagrahari.questionbank.View.Home.ViewPaperScreen
 import dev.abhishekagrahari.questionbank.View.QuizScreen
 import dev.abhishekagrahari.questionbank.ui.theme.QuestionBankTheme
+import dev.abhishekagrahari.questionbank.viewmodel.QuestionPaperViewModel
+import dev.abhishekagrahari.questionbank.viewmodel.QuestionViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +51,8 @@ class MainActivity : ComponentActivity() {
 fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()
     val viewModel = QuizViewModel()
+    val qstnPaperViewModel = QuestionPaperViewModel()
+    val qstnViewModel = QuestionViewModel()
 
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
@@ -84,7 +88,7 @@ fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
         }
         composable(Screen.AddQuestion.route) {
             BaseLayout(navController = navController, title = "Let's Add Question", darkTheme = darkTheme, onThemeChange = onThemeChange) {
-                AddQuestionScreen { navController.popBackStack() }
+                AddQuestionScreen ( viewModel =qstnViewModel , {navController.popBackStack()} )
             }
         }
         composable(Screen.QuestionList.route) {
@@ -94,12 +98,12 @@ fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
         }
         composable(Screen.GeneratePaper.route) {
             BaseLayout(navController = navController, title = "Create a New Paper", darkTheme = darkTheme, onThemeChange = onThemeChange) {
-                GeneratePaperScreen(context = LocalContext.current, onPaperGenerated = { navController.popBackStack() })
+                GeneratePaperScreen(context = LocalContext.current, viewModel = qstnPaperViewModel, onPaperGenerated = { navController.popBackStack() })
             }
         }
         composable(Screen.ViewPaper.route) {
             BaseLayout(navController = navController, title = "Your Created Paper", darkTheme = darkTheme, onThemeChange = onThemeChange) {
-                ViewPaperScreen(context = LocalContext.current, navController = navController)
+                ViewPaperScreen(context = LocalContext.current, navController = navController , viewModel = qstnPaperViewModel)
             }
         }
         composable(Screen.Quizui.route){

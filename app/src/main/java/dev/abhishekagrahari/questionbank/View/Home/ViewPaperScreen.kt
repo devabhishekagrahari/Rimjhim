@@ -19,7 +19,7 @@ import dev.abhishekagrahari.questionbank.model.QuestionPaper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewPaperScreen(viewModel: QuestionPaperViewModel = viewModel(), context: Context ,navController: NavController) {
+fun ViewPaperScreen(viewModel: QuestionPaperViewModel , context: Context ,navController: NavController) {
     val papers by viewModel.papers.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
 

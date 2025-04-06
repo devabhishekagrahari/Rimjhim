@@ -26,7 +26,7 @@ import dev.abhishekagrahari.questionbank.viewmodel.QuestionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddQuestionScreen(viewModel: QuestionViewModel = viewModel(), onNavigateBack: () -> Unit) {
+fun AddQuestionScreen(viewModel: QuestionViewModel, onNavigateBack: () -> Unit) {
     var questionText by remember { mutableStateOf("") }
     var answerText by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
