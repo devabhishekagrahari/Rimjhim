@@ -1,5 +1,6 @@
 package dev.abhishekagrahari.questionbank
 
+import QuizViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,7 @@ import dev.abhishekagrahari.questionbank.View.Home.HomeScreen
 import dev.abhishekagrahari.questionbank.View.Home.QuestionListScreen
 //import dev.abhishekagrahari.questionbank.View.QuizScreen
 import dev.abhishekagrahari.questionbank.View.Home.ViewPaperScreen
+import dev.abhishekagrahari.questionbank.View.QuizScreen
 import dev.abhishekagrahari.questionbank.ui.theme.QuestionBankTheme
 
 class MainActivity : ComponentActivity() {
@@ -50,11 +52,11 @@ fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                 HomeScreen(navController)
             }
         }
-        /*
         composable(Screen.quiz.route) {
-            BaseLayout(navController = navController ){ /*QuizScreen(navController = navController)*/ } }
-
-         */
+            BaseLayout(navController = navController , title= "Let's have a Quiz " , darkTheme= darkTheme , onThemeChange = onThemeChange){
+                QuizScreen(viewModel = QuizViewModel(), navController = navController)
+            }
+        }
         composable(Screen.AboutUs.route){
             BaseLayout(navController = navController , title = "About us", darkTheme = darkTheme, onThemeChange = onThemeChange) {
                 AboutUsScreen()
@@ -65,32 +67,6 @@ fun QuestionBankApp(darkTheme: Boolean, onThemeChange: (Boolean) -> Unit) {
                 ContactUsScreen()
             }
         }
-      /*  composable(
-            "fullQuestionPaper/{title}/{createdBy}/{totalMarks}/{difficultyDistribution}/{questions}/{timeStamp}"
-        ) { backStackEntry ->
-            val title = backStackEntry.arguments?.getString("title")
-            val createdBy = backStackEntry.arguments?.getString("createdBy")
-            val totalMarks = backStackEntry.arguments?.getString("totalMarks")?.toIntOrNull()
-            val timeStamp=backStackEntry.arguments?.getString("timeStamp")?.toLongOrNull()
-            val difficultyDistribution = parseDifficultyDistribution(
-                backStackEntry.arguments?.getString("difficultyDistribution")
-            )
-            val questions = parseQuestions(
-                backStackEntry.arguments?.getString("questions")
-            )
-
-
-            BaseLayout(navController = navController, title = "Full Paper") {
-                if (title != null && createdBy != null && totalMarks != null && difficultyDistribution != null && questions != null &&timeStamp!=null) {
-                    FullPaperViewScreen(title = title, createdBy = createdBy, totalMarks = totalMarks, timestamp = timeStamp,difficultyDistribution = difficultyDistribution, questions = questions)
-                } else {
-                    // Handle missing arguments gracefully (e.g., show a loading state or error message)
-                    Text("Error: Missing required data")
-                }
-            }
-        }
-
-        */
         composable(Screen.AddQuestion.route) {
             BaseLayout(navController = navController, title = "Let's Add Question", darkTheme = darkTheme, onThemeChange = onThemeChange) {
                 AddQuestionScreen { navController.popBackStack() }

@@ -72,6 +72,13 @@ suspend fun assessAnswer(userAnswer: String, expectedAnswer: String): FeedbackRe
             "score": 7  // Score from 0 to 10
         }
     """.trimIndent()
+    fun extractJsonFromMarkdown(input: String): String {
+        return input
+            .replace("```json", "")
+            .replace("```", "")
+            .trim()
+    }
+
 
     return try {
         val response: HttpResponse = client.post(GEMINI_ENDPOINT) {
@@ -79,15 +86,18 @@ suspend fun assessAnswer(userAnswer: String, expectedAnswer: String): FeedbackRe
             setBody(GeminiRequest(listOf(Content(listOf(Part(prompt))))))
         }
 
+
         val rawResponse = response.bodyAsText()
         Log.d("GeminiAPI", "Raw Response: $rawResponse")
 
         val result: GeminiResponse = response.body()
-        val jsonOutput = result.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-            ?: """{"feedback": "No response from AI", "score": 0}""" // Default fallback JSON
+        // Extract text
+        val rawText = result.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+            ?: """{"feedback": "No response from AI", "score": 0}""" // fallback
 
-        // Parse JSON response into FeedbackResponse object
-        Json.decodeFromString(FeedbackResponse.serializer(), jsonOutput).also {
+        val cleanJson = extractJsonFromMarkdown(rawText)
+
+        Json.decodeFromString(FeedbackResponse.serializer(), cleanJson).also {
             Log.d("GeminiAPI", "Parsed Response: $it")
         }
     } catch (e: Exception) {
